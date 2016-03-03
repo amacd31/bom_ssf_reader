@@ -8,8 +8,9 @@ except:
 
 class SSFReader(object):
 
-    def __init__(self):
-        config_url = 'http://www.bom.gov.au/water/ssf/images/site_config.json'
+    def __init__(self, server_url = 'http://www.bom.gov.au/water/ssf'):
+        self.server_url = server_url
+        config_url = '{0}/images/site_config.json'.format(self.server_url)
         self.metadata = requests.get(config_url).json()
 
         self.station_list = []
@@ -30,7 +31,7 @@ class SSFReader(object):
 
     def get_forecast(self, awrc, forecast_date):
         forecast_url = '{site}/{drainage}/{basin}/fc/{year}/{month:02d}/{awrc}_FC_10_{year}_{month:02d}_table.csv'.format(**{
-            'site': 'http://www.bom.gov.au/water/ssf',
+            'site': self.server_url,
             'drainage': self.station_meta[awrc]['drainage'],
             'basin': self.station_meta[awrc]['basin'],
             'year': forecast_date.year,
