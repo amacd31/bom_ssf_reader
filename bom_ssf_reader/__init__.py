@@ -2,7 +2,7 @@ import requests
 import bom_data_parser as bdp
 
 try:
-    from urlib2 import urlopen
+    from urllib2 import urlopen
 except:
     from urllib.request import urlopen
 
