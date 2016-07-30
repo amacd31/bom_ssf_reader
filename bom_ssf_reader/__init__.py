@@ -1,6 +1,8 @@
 import requests
 import bom_data_parser as bdp
 
+import io
+
 try:
     from urllib2 import urlopen
 except:
@@ -8,10 +10,16 @@ except:
 
 class SSFReader(object):
 
-    def __init__(self, server_url = 'http://www.bom.gov.au/water/ssf'):
+    def __init__(
+            self,
+            server_url = 'http://www.bom.gov.au/water/ssf',
+            auth = None
+        ):
+
         self.server_url = server_url
+        self.auth = auth
         config_url = '{0}/images/site_config.json'.format(self.server_url)
-        self.metadata = requests.get(config_url).json()
+        self.metadata = requests.get(config_url, auth = self.auth).json()
 
         self.station_list = []
         self.station_meta = {}
@@ -38,8 +46,9 @@ class SSFReader(object):
             'month': forecast_date.month,
             'awrc': awrc
         })
+        forecast_csv = io.BytesIO(requests.get(forecast_url, auth = self.auth).content)
 
-        return bdp.read_ssf_csv(urlopen(forecast_url))
+        return bdp.read_ssf_csv(forecast_csv)
 
 from ._version import get_versions
 __version__ = get_versions()['version']
